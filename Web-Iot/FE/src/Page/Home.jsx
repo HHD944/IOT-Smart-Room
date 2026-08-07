@@ -1,0 +1,218 @@
+import { useState } from "react";
+import { Card } from "../Components/ui/card";
+import { Button } from "../Components/ui/button";
+
+export default function Dashboard() {
+  const [lightOn, setLightOn] = useState(false);
+  const [fanOn, setFanOn] = useState(false);
+  const [occupancy, setOccupancy] = useState(true);
+
+  const [temperature] = useState(25.5);
+  const [humidity] = useState(55);
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="space-y-2">
+          <h2 className="text-3xl font-bold text-foreground">
+            Trung Tâm Điều Khiển
+          </h2>
+          <p className="text-muted-foreground">
+            Theo dõi và kiểm soát phòng họp thông minh của bạn theo thời gian
+            thực
+          </p>
+        </div>
+
+        {/* Status Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Occupancy Status */}
+          <Card className="bg-card/50 border-border p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">
+                  Trạng Thái Phòng!!
+                </p>
+                <h3 className="text-2xl font-bold text-foreground">
+                  {occupancy ? "Có Người" : "Trống"}
+                </h3>
+              </div>
+              <div
+                className={`w-16 h-16 rounded-lg flex items-center justify-center ${
+                  occupancy ? "bg-green-500/20" : "bg-gray-500/20"
+                }`}
+              >
+                <svg
+                  className={`w-8 h-8 ${occupancy ? "text-green-500" : "text-gray-400"}`}
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                </svg>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Cảm biến chuyển động phát hiện 2 phút trước
+            </p>
+          </Card>
+
+          {/* Environment Status */}
+          <Card className="bg-card/50 border-border p-6">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">Nhiệt Độ</p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-bold text-foreground">
+                    {temperature}°
+                  </span>
+                  <span className="text-sm text-muted-foreground">C</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Phạm vi tối ưu
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">Độ Ẩm</p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-bold text-foreground">
+                    {humidity}%
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Mức bình thường
+                </p>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Controls Section */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-foreground">
+            Điều Khiển Thiết Bị
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Lighting Control */}
+            <Card className="bg-card/50 border-border p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                      lightOn ? "bg-yellow-500/20" : "bg-gray-500/20"
+                    }`}
+                  >
+                    <svg
+                      className={`w-6 h-6 ${lightOn ? "text-yellow-400" : "text-gray-400"}`}
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-20C5.1 1 2 4.1 2 8c0 2.85 1.92 5.28 4.5 6.16V21h5v-6.84c2.58-.88 4.5-3.31 4.5-6.16C15 4.1 11.9 1 12 1z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Đèn</p>
+                    <p className="text-lg font-semibold text-foreground">
+                      {lightOn ? "Bật" : "Tắt"}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => setLightOn(!lightOn)}
+                  variant={lightOn ? "default" : "outline"}
+                  className="rounded-lg"
+                >
+                  {lightOn ? "Tắt" : "Bật"}
+                </Button>
+              </div>
+              <div className="space-y-2 text-xs text-muted-foreground">
+                <p>Cập nhật lần cuối: 2 giây trước</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  <span>Thiết bị hoạt động bình thường</span>
+                </div>
+              </div>
+            </Card>
+
+            {/* Fan Control */}
+            <Card className="bg-card/50 border-border p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                      fanOn ? "bg-blue-500/20" : "bg-gray-500/20"
+                    }`}
+                  >
+                    <svg
+                      className={`w-6 h-6 ${fanOn ? "text-blue-400" : "text-gray-400"} ${fanOn ? "animate-spin" : ""}`}
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 3C6.48 3 2 6.92 2 11.5c0 3.02 1.85 5.65 4.54 7.13.3.15.62.16.93.04l2.87-1.22c.27-.11.59-.08.85.08 1.61.87 3.48 1.38 5.49 1.38 3.59 0 6.74-2.08 8.41-5.15.24-.45.02-1.01-.48-1.13-2.35-.55-4.38-1.73-5.81-3.35-.64-.72-1.55-1.13-2.54-1.13-.94 0-1.81.37-2.46 1.03-.36.38-.95.42-1.38.09l-1.37-1.07c-.36-.28-.38-.8-.04-1.1.93-.82 2.15-1.33 3.5-1.33 2.16 0 4.12.91 5.51 2.37 1.6-1.18 3.58-1.87 5.72-1.87.55 0 1-.45 1-1s-.45-1-1-1c-2.52 0-4.82.72-6.82 1.96-1.5-1.14-3.36-1.81-5.39-1.81z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      Quạt Thông Gió
+                    </p>
+                    <p className="text-lg font-semibold text-foreground">
+                      {fanOn ? "Bật" : "Tắt"}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => setFanOn(!fanOn)}
+                  variant={fanOn ? "default" : "outline"}
+                  className="rounded-lg"
+                >
+                  {fanOn ? "Tắt" : "Bật"}
+                </Button>
+              </div>
+              <div className="space-y-2 text-xs text-muted-foreground">
+                <p>Cập nhật lần cuối: 1 giây trước</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  <span>Thiết bị hoạt động bình thường</span>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <Card className="bg-card/50 border-border p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
+            Hoạt Động Hôm Nay
+          </h3>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <p className="text-sm text-muted-foreground mb-2">Đèn Bật</p>
+              <p className="text-2xl font-bold text-primary">6h 24m</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Tổng thời gian sử dụng
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground mb-2">
+                Thời Gian Quạt
+              </p>
+              <p className="text-2xl font-bold text-primary">3h 15m</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Tổng thời gian sử dụng
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground mb-2">
+                Nhiệt Độ Cao Nhất
+              </p>
+              <p className="text-2xl font-bold text-primary">26.8°C</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                lúc 2:30 Chiều
+              </p>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}

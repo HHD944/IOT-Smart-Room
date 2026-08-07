@@ -1,0 +1,18 @@
+services:
+  frontend:
+    build: ./FE
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./FE:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+  backend:
+    build: ./BE
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./BE:/app
+      - /app/node_modules
