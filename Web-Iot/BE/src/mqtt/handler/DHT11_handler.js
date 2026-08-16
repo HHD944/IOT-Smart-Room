@@ -1,9 +1,9 @@
-import { Service } from "../services/devices/DHT11.service.js";
+import ServiceDHT11 from "../../services/devices/DHT11.service.js";
 
-const handleDHT11DataMessage = async (message) => {
+const handleDHT11DataMessage = async (message,io) => {
   const data = JSON.parse(message);
 
-  await Service.ServiceDHT11(data);
+  await ServiceDHT11.ServiceDHT11(data, io);
 };
 
 export default handleDHT11DataMessage;

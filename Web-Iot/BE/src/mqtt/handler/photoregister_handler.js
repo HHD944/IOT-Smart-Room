@@ -1,9 +1,9 @@
-import { Service } from "../services/devices/Photo.service.js";
+import ServicePhotoregister from "../../services/devices/Photo.service.js";
 
-const handlePhotoregisterDataMessage = async (message) => {
+const handlePhotoregisterDataMessage = async (message,io) => {
   const data = JSON.parse(message);
 
-  await Service.ServicePhotoregister(data);
+  await ServicePhotoregister.ServicePhotoregister(data, io);
 };
 
 export default handlePhotoregisterDataMessage;

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card } from "../Components/ui/card";
 import { Button } from "../Components/ui/button";
+import { io } from "socket.io-client";
 
 export default function Dashboard() {
   const [lightOn, setLightOn] = useState(false);
@@ -9,6 +10,79 @@ export default function Dashboard() {
 
   const [temperature] = useState(25.5);
   const [humidity] = useState(55);
+
+  const setLight = async (state) => {
+    try {
+      const response = await fetch("http://localhost:3000/api/device/light", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          device: "light",
+          action: state,
+        }),
+      });
+
+      const data = await response.json();
+
+      console.log("BE response:", data);
+    } catch (error) {
+      console.error("Lỗi gửi dữ liệu:", error);
+    }
+  };
+
+  const toggleLight = () => {
+    const newState = !lightOn;
+
+    setLightOn(newState);
+    setLight(newState ? "ON" : "OFF");
+  };
+
+  const setFan = async (state) => {
+    try {
+      const response = await fetch("http://localhost:3000/api/device/fan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          device: "fan",
+          action: state,
+        }),
+      });
+
+      const data = await response.json();
+
+      console.log("BE response:", data);
+    } catch (error) {
+      console.error("Lỗi gửi dữ liệu:", error);
+    }
+  };
+
+  const toggleFan = () => {
+    const newState = !fanOn;
+
+    setFanOn(newState);
+    setFan(newState ? "ON" : "OFF");
+  };
+
+  const socket = io("http://localhost:3000");
+
+  socket.on("connect", () => {
+    console.log("Đã kết nối Socket.IO:", socket.id);
+  });
+
+  // socket.on("dht11-data", (data) => {
+  //   console.log("Nhận JSON từ BE:", data);
+  //   temperature = data.temperature;
+  //   humidity = data.humidity;
+  // });
+
+  socket.on("pir-data", (data) => {
+    console.log("Nhận JSON từ BE:", data);
+    setOccupancy(data.motion);
+  });
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -51,9 +125,6 @@ export default function Dashboard() {
                 </svg>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Cảm biến chuyển động phát hiện 2 phút trước
-            </p>
           </Card>
 
           {/* Environment Status */}
@@ -118,7 +189,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <Button
-                  onClick={() => setLightOn(!lightOn)}
+                  onClick={toggleLight}
                   variant={lightOn ? "default" : "outline"}
                   className="rounded-lg"
                 >
@@ -161,7 +232,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <Button
-                  onClick={() => setFanOn(!fanOn)}
+                  onClick={toggleFan}
                   variant={fanOn ? "default" : "outline"}
                   className="rounded-lg"
                 >
