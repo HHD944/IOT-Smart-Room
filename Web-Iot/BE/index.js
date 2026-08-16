@@ -3,7 +3,7 @@ import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
 
-import { startSubscriber } from "./src/mqtt/subscriber.js";
+import  startSubscriber  from "./src/mqtt/subscriber.js";
 
 import loginRoutes from "./src/routes/Login.js";
 import registerRoutes from "./src/routes/Register.js";

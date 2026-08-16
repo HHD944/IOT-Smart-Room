@@ -36,4 +36,4 @@ const startSubscriber = (io) => {
   });
 };
 
-export default { startSubscriber };
+export default startSubscriber ;
