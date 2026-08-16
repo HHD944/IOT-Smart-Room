@@ -4,6 +4,8 @@ import handlePIRDataMessage from "./handler/PIR_handler.js";
 import handleTempDataMessage from "./handler/DHT11_handler.js";
 import handlePhotoregisterDataMessage from "./handler/photoregister_handler.js";
 
+import handleCloudSensorData from "../cloud/cloudHandler.js";
+
 const startSubscriber = (io) => {
   client.on("connect", () => {
     console.log("Đã kết nối thành công tới MQTT Broker!");
@@ -25,7 +27,8 @@ const startSubscriber = (io) => {
     if (topic === "23127349/sensor/pir") {
       handlePIRDataMessage(message, io);
     } else if (topic === "23127468/sensor/temp") {
-      handleTempDataMessage(message, io);     
+      handleTempDataMessage(message, io);
+      handleCloudSensorData(topic, message);
     } else if (topic === "23127468/sensor/photo") {
       handlePhotoregisterDataMessage(message, io);
     }
@@ -36,4 +39,4 @@ const startSubscriber = (io) => {
   });
 };
 
-export default startSubscriber ;
+export default startSubscriber;

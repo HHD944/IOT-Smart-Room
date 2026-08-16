@@ -9,6 +9,8 @@ import loginRoutes from "./src/routes/Login.js";
 import registerRoutes from "./src/routes/Register.js";
 import deviceRoutes from "./src/routes/Device.js";
 
+import startCloudSync from "./src/cloud/cloudSync.js";
+
 const app = express();
 const server = http.createServer(app);
 
@@ -29,6 +31,8 @@ app.use("/api/device", deviceRoutes);
 
 // Truyền io vào MQTT subscriber
 startSubscriber(io);
+
+startCloudSync();
 
 server.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
