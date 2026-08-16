@@ -1,15 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "../Components/ui/card";
 import { Button } from "../Components/ui/button";
 import { io } from "socket.io-client";
 
 export default function Dashboard() {
+  const [lightOnTime, setLightOnTime] = useState(null);
+  const [fanOnTime, setFanOnTime] = useState(null);
+
   const [lightOn, setLightOn] = useState(false);
   const [fanOn, setFanOn] = useState(false);
   const [occupancy, setOccupancy] = useState(true);
 
-  const [temperature] = useState(25.5);
-  const [humidity] = useState(55);
+  const [temperature, setTemperature] = useState(25.5);
+  const [humidity, setHumidity] = useState(55);
+  const [lightIntensity, setLightIntensity] = useState(750);
 
   const setLight = async (state) => {
     try {
@@ -37,6 +41,10 @@ export default function Dashboard() {
 
     setLightOn(newState);
     setLight(newState ? "ON" : "OFF");
+
+    if (newState) {
+      setLightOnTime(new Date());
+    }
   };
 
   const setFan = async (state) => {
@@ -65,24 +73,48 @@ export default function Dashboard() {
 
     setFanOn(newState);
     setFan(newState ? "ON" : "OFF");
+
+    if (newState) {
+      setFanOnTime(new Date());
+    }
   };
 
-  const socket = io("http://localhost:3000");
+  useEffect(() => {
+    const socket = io("http://localhost:3000");
 
-  socket.on("connect", () => {
-    console.log("Đã kết nối Socket.IO:", socket.id);
-  });
+    socket.on("connect", () => {
+      console.log("Đã kết nối Socket.IO:", socket.id);
+    });
 
-  // socket.on("dht11-data", (data) => {
-  //   console.log("Nhận JSON từ BE:", data);
-  //   temperature = data.temperature;
-  //   humidity = data.humidity;
-  // });
+    socket.on("dht11-data", (data) => {
+      console.log("Nhận JSON từ BE:", data);
+      setTemperature(data.temp);
+      setHumidity(data.humid);
+    });
 
-  socket.on("pir-data", (data) => {
-    console.log("Nhận JSON từ BE:", data);
-    setOccupancy(data.motion);
-  });
+    socket.on("pir-data", (data) => {
+      console.log("Nhận JSON từ BE:", data);
+      setOccupancy(data.motion);
+    });
+
+    socket.on("photoregister-data", (data) => {
+      console.log("Nhận JSON từ BE:", data);
+      setLightIntensity(data.light);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  const formatTime = (time) => {
+    if (!time) return "--:--";
+
+    return time.toLocaleTimeString("vi-VN", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -138,9 +170,6 @@ export default function Dashboard() {
                   </span>
                   <span className="text-sm text-muted-foreground">C</span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Phạm vi tối ưu
-                </p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground mb-2">Độ Ẩm</p>
@@ -149,9 +178,6 @@ export default function Dashboard() {
                     {humidity}%
                   </span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Mức bình thường
-                </p>
               </div>
             </div>
           </Card>
@@ -196,13 +222,7 @@ export default function Dashboard() {
                   {lightOn ? "Tắt" : "Bật"}
                 </Button>
               </div>
-              <div className="space-y-2 text-xs text-muted-foreground">
-                <p>Cập nhật lần cuối: 2 giây trước</p>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-primary"></div>
-                  <span>Thiết bị hoạt động bình thường</span>
-                </div>
-              </div>
+              <div className="space-y-2 text-xs text-muted-foreground"></div>
             </Card>
 
             {/* Fan Control */}
@@ -239,13 +259,7 @@ export default function Dashboard() {
                   {fanOn ? "Tắt" : "Bật"}
                 </Button>
               </div>
-              <div className="space-y-2 text-xs text-muted-foreground">
-                <p>Cập nhật lần cuối: 1 giây trước</p>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-primary"></div>
-                  <span>Thiết bị hoạt động bình thường</span>
-                </div>
-              </div>
+              <div className="space-y-2 text-xs text-muted-foreground"></div>
             </Card>
           </div>
         </div>
@@ -258,27 +272,24 @@ export default function Dashboard() {
           <div className="grid grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-muted-foreground mb-2">Đèn Bật</p>
-              <p className="text-2xl font-bold text-primary">6h 24m</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Tổng thời gian sử dụng
+              <p className="text-2xl font-bold text-primary">
+                {formatTime(lightOnTime)}
               </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground mb-2">
                 Thời Gian Quạt
               </p>
-              <p className="text-2xl font-bold text-primary">3h 15m</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Tổng thời gian sử dụng
+              <p className="text-2xl font-bold text-primary">
+                {formatTime(fanOnTime)}
               </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground mb-2">
-                Nhiệt Độ Cao Nhất
+                Cường Độ Ánh Sáng
               </p>
-              <p className="text-2xl font-bold text-primary">26.8°C</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                lúc 2:30 Chiều
+              <p className="text-2xl font-bold text-primary">
+                {lightIntensity} lux
               </p>
             </div>
           </div>

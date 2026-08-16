@@ -25,7 +25,7 @@ const startSubscriber = (io) => {
     if (topic === "23127349/sensor/pir") {
       handlePIRDataMessage(message, io);
     } else if (topic === "23127468/sensor/temp") {
-      handleTempDataMessage(message, io);
+      handleTempDataMessage(message, io);     
     } else if (topic === "23127468/sensor/photo") {
       handlePhotoregisterDataMessage(message, io);
     }
