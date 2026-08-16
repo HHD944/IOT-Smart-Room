@@ -8,6 +8,7 @@ import  startSubscriber  from "./src/mqtt/subscriber.js";
 import loginRoutes from "./src/routes/Login.js";
 import registerRoutes from "./src/routes/Register.js";
 import deviceRoutes from "./src/routes/Device.js";
+import cloudRoutes from "./src/routes/Cloud.js";
 
 import startCloudSync from "./src/cloud/cloudSync.js";
 
@@ -28,6 +29,7 @@ app.use(express.json());
 app.use("/api/login", loginRoutes);
 app.use("/api/register", registerRoutes);
 app.use("/api/device", deviceRoutes);
+app.use("/api/cloud", cloudRoutes);
 
 // Truyền io vào MQTT subscriber
 startSubscriber(io);
